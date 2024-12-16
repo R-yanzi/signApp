@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sign.signin.mapper.ReportUserMapper">
+  <resultMap id="BaseResultMap" type="com.sign.signin.bean.ReportUser">
+    <result column="userid" jdbcType="VARCHAR" property="userid" />
+    <result column="report_id" jdbcType="BIGINT" property="reportId" />
+    <result column="weight_id" jdbcType="INTEGER" property="weightId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    userid, report_id, weight_id
+  </sql>
+  <insert id="insert" parameterType="com.sign.signin.bean.ReportUser">
+    insert into report_user (userid, report_id, weight_id
+      )
+    values (#{userid,jdbcType=VARCHAR}, #{reportId,jdbcType=BIGINT}, #{weightId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sign.signin.bean.ReportUser">
+    insert into report_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="reportId != null">
+        report_id,
+      </if>
+      <if test="weightId != null">
+        weight_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="reportId != null">
+        #{reportId,jdbcType=BIGINT},
+      </if>
+      <if test="weightId != null">
+        #{weightId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateWeightId">
+    update report_user
+    set weight_id = #{weightId,jdbcType=INTEGER}
+    where report_id = #{reportId,jdbcType=BIGINT} and userid = #{userid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByReportId" resultType="com.sign.signin.bean.ReportUser">
+    select
+    <include refid="Base_Column_List" />
+    from report_user
+    where report_id = #{reportId,jdbcType=BIGINT}
+  </select>
+  <select id="selectTypesByUserId" resultType="com.sign.signin.bean.Weight">
+    select type, weight.weight_id AS weightId, proportion
+    from weight, report_user
+    where weight.weight_id = report_user.weight_id and report_user.userid = #{userid,jdbcType=VARCHAR}
+  </select>
+</mapper>

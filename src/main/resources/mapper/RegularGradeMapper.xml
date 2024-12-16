@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sign.signin.mapper.RegularGradeMapper">
+  <resultMap id="BaseResultMap" type="com.sign.signin.bean.RegularGrade">
+    <id column="userid" jdbcType="VARCHAR" property="userid" />
+    <result column="attendance_score" jdbcType="DECIMAL" property="attendanceScore" />
+    <result column="report_score" jdbcType="DECIMAL" property="reportScore" />
+    <result column="work_score" jdbcType="DECIMAL" property="workScore" />
+    <result column="total_score" jdbcType="DECIMAL" property="totalScore" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    userid, attendance_score, report_score, work_score, total_score
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from regular_grade
+    where userid = #{userid,jdbcType=VARCHAR}
+  </select>
+    <select id="selectAll" resultType="com.sign.signin.bean.RegularGrade">
+      select
+      <include refid="Base_Column_List" />
+      from regular_grade
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from regular_grade
+    where userid = #{userid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyColumn="userid" keyProperty="userid" parameterType="com.sign.signin.bean.RegularGrade" useGeneratedKeys="true">
+    insert into regular_grade (attendance_score, report_score, work_score, total_score
+      )
+    values (#{attendanceScore,jdbcType=DECIMAL}, #{reportScore,jdbcType=DECIMAL}, #{workScore,jdbcType=DECIMAL}, #{totalScore,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="userid" keyProperty="userid" parameterType="com.sign.signin.bean.RegularGrade" useGeneratedKeys="true">
+    insert into regular_grade
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="attendanceScore != null">
+        attendance_score,
+      </if>
+      <if test="reportScore != null">
+        report_score,
+      </if>
+      <if test="workScore != null">
+        work_score,
+      </if>
+      <if test="totalScore != null">
+        total_score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="attendanceScore != null">
+        #{attendanceScore,jdbcType=DECIMAL},
+      </if>
+      <if test="reportScore != null">
+        #{reportScore,jdbcType=DECIMAL},
+      </if>
+      <if test="workScore != null">
+        #{workScore,jdbcType=DECIMAL},
+      </if>
+      <if test="totalScore != null">
+        #{totalScore,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sign.signin.bean.RegularGrade">
+    update regular_grade
+    <set>
+      <if test="attendanceScore != null">
+        attendance_score = #{attendanceScore,jdbcType=DECIMAL},
+      </if>
+      <if test="reportScore != null">
+        report_score = #{reportScore,jdbcType=DECIMAL},
+      </if>
+      <if test="workScore != null">
+        work_score = #{workScore,jdbcType=DECIMAL},
+      </if>
+      <if test="totalScore != null">
+        total_score = #{totalScore,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where userid = #{userid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sign.signin.bean.RegularGrade">
+    update regular_grade
+    set attendance_score = #{attendanceScore,jdbcType=DECIMAL},
+      report_score = #{reportScore,jdbcType=DECIMAL},
+      work_score = #{workScore,jdbcType=DECIMAL},
+      total_score = #{totalScore,jdbcType=DECIMAL}
+    where userid = #{userid,jdbcType=VARCHAR}
+  </update>
+</mapper>

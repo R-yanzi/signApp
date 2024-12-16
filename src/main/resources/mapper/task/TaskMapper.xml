@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sign.signin.mapper.task.TaskMapper">
+  <resultMap id="BaseResultMap" type="com.sign.signin.bean.task.Task">
+    <id column="taskid" jdbcType="INTEGER" property="taskid" />
+    <result column="userid" jdbcType="VARCHAR" property="userid" />
+    <result column="place" jdbcType="VARCHAR" property="place" />
+    <result column="classname" jdbcType="VARCHAR" property="classname" />
+    <result column="time" jdbcType="VARCHAR" property="time" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="courseid" jdbcType="INTEGER" property="courseid" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    taskid, userid, place, classname, `time`, `state`, courseid
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from task
+    where taskid = #{taskid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultType="java.lang.Long">
+    select count(*)
+    from task
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from task
+    where taskid = #{taskid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="taskid" keyProperty="taskid" parameterType="com.sign.signin.bean.task.Task" useGeneratedKeys="true">
+    insert into task (userid, place, classname, 
+      `time`, `state`, courseid
+      )
+    values (#{userid,jdbcType=VARCHAR}, #{place,jdbcType=VARCHAR}, #{classname,jdbcType=VARCHAR}, 
+      #{time,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{courseid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="taskid" keyProperty="taskid" parameterType="com.sign.signin.bean.task.Task" useGeneratedKeys="true">
+    insert into task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="place != null">
+        place,
+      </if>
+      <if test="classname != null">
+        classname,
+      </if>
+      <if test="time != null">
+        `time`,
+      </if>
+      <if test="state != null">
+        `state`,
+      </if>
+      <if test="courseid != null">
+        courseid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null">
+        #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="classname != null">
+        #{classname,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="courseid != null">
+        #{courseid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sign.signin.bean.task.Task">
+    update task
+    <set>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null">
+        place = #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="classname != null">
+        classname = #{classname,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        `time` = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        `state` = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="courseid != null">
+        courseid = #{courseid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where taskid = #{taskid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sign.signin.bean.task.Task">
+    update task
+    set userid = #{userid,jdbcType=VARCHAR},
+      place = #{place,jdbcType=VARCHAR},
+      classname = #{classname,jdbcType=VARCHAR},
+      `time` = #{time,jdbcType=VARCHAR},
+      `state` = #{state,jdbcType=VARCHAR},
+      courseid = #{courseid,jdbcType=INTEGER}
+    where taskid = #{taskid,jdbcType=INTEGER}
+  </update>
+</mapper>

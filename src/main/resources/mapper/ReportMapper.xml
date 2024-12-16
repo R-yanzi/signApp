@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sign.signin.mapper.ReportMapper">
+  <resultMap id="BaseResultMap" type="com.sign.signin.bean.Report">
+    <id column="report_id" jdbcType="BIGINT" property="reportId" />
+    <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+    <result column="reported" jdbcType="BIGINT" property="reported" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    report_id, report_time, reported
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from report
+    where report_id = #{reportId,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultType="com.sign.signin.bean.Report">
+      select
+      <include refid="Base_Column_List" />
+      from report
+    </select>
+    <select id="getReportCount" resultType="java.lang.Long">
+      select count(*)
+      from report
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from report
+    where report_id = #{reportId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="report_id" keyProperty="reportId" parameterType="com.sign.signin.bean.Report" useGeneratedKeys="true">
+    insert into report (report_time, reported)
+    values (DEFAULT, DEFAULT)
+  </insert>
+  <insert id="insertSelective" keyColumn="report_id" keyProperty="reportId" parameterType="com.sign.signin.bean.Report" useGeneratedKeys="true">
+    insert into report
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="reportTime != null">
+        report_time,
+      </if>
+      <if test="reported != null">
+        reported,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="reportTime != null">
+        #{reportTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reported != null">
+        #{reported,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sign.signin.bean.Report">
+    update report
+    <set>
+      <if test="reportTime != null">
+        report_time = #{reportTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reported != null">
+        reported = #{reported,jdbcType=BIGINT},
+      </if>
+    </set>
+    where report_id = #{reportId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sign.signin.bean.Report">
+    update report
+    set report_time = #{reportTime,jdbcType=TIMESTAMP},
+      reported = #{reported,jdbcType=BIGINT}
+    where report_id = #{reportId,jdbcType=BIGINT}
+  </update>
+    <update id="updateReported">
+      update report
+      set reported = reported + 1
+      where report_id = #{reportId,jdbcType=BIGINT}
+    </update>
+</mapper>
