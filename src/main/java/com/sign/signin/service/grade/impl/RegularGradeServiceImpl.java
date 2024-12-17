@@ -1,19 +1,19 @@
 package com.sign.signin.service.grade.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.sign.signin.bean.*;
+import com.sign.signin.bean.grade.Ratio;
 import com.sign.signin.mapper.RegularGradeMapper;
+import com.sign.signin.service.grade.ProportionService;
 import com.sign.signin.service.grade.RegularGradeService;
 import com.sign.signin.service.report.ReportService;
 import com.sign.signin.service.report.ReportUserService;
-import com.sign.signin.service.report.UserReportService;
 import com.sign.signin.service.report.UserService;
+import com.sign.signin.service.task.TaskLogService;
+import com.sign.signin.service.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,7 +21,6 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class RegularGradeServiceImpl implements RegularGradeService {
@@ -38,14 +37,14 @@ public class RegularGradeServiceImpl implements RegularGradeService {
     @Autowired
     private RegularGradeMapper regularGradeMapper;
 
-    @Value("${myRule.attendanceRatio}")
-    private BigDecimal attendanceRatio;
+    @Autowired
+    private TaskService taskService;
 
-    @Value("${myRule.reportRatio}")
-    private BigDecimal reportRatio;
+    @Autowired
+    private TaskLogService taskLogService;
 
-    @Value("${myRule.workRatio}")
-    private BigDecimal workRatio;
+    @Autowired
+    private ProportionService proportionService;
 
     /**
      * 获取成绩列表
@@ -68,18 +67,29 @@ public class RegularGradeServiceImpl implements RegularGradeService {
             BigDecimal attendanceScore = calculateAttendance(user.getUserid());
             // 算汇报分数
             BigDecimal reportScore = calculateReport(user.getUserid());
+            // 作业分数
+            BigDecimal workScore = BigDecimal.ZERO;
             for (RegularGrade regularGrade : regularGrades) {
                 // 该学生已经有成绩了,保留汇报成绩,其余重新计算
                 if (regularGrade.getUserid().equals(user.getUserid())) {
-                    grades.add(new Grade(user, attendanceScore, reportScore, regularGrade.getWorkScore()));
+                    workScore = regularGrade.getWorkScore();
+                    // 计算总成绩
+                    BigDecimal totalScore = calculateTotal(attendanceScore, reportScore, workScore);
+                    // 修改成绩
+                    RegularGrade newRG = new RegularGrade(user.getUserid(), attendanceScore, reportScore, workScore, totalScore);
+                    regularGradeMapper.updateByPrimaryKey(newRG);
+                    grades.add(new Grade(user, newRG));
                     flag = false;
                     break;
                 }
             }
             if (flag) {
-                // 没有他的汇报成绩
-                // 作业成绩默认为0
-                grades.add(new Grade(user, attendanceScore, reportScore, BigDecimal.ZERO));
+                // 没有他的汇报成绩, 则新增成绩
+                // 计算总成绩
+                BigDecimal totalScore = calculateTotal(attendanceScore, reportScore, workScore);
+                RegularGrade newRG = new RegularGrade(user.getUserid(), attendanceScore, reportScore, workScore, totalScore);
+                regularGradeMapper.insert(newRG);
+                grades.add(new Grade(user, newRG));
             }
         }
         return grades;
@@ -93,7 +103,14 @@ public class RegularGradeServiceImpl implements RegularGradeService {
     @Override
     public BigDecimal calculateAttendance(String userid) {
         // 首先获取总共的签到任务次数
-        return BigDecimal.ZERO;
+        Long taskCount = taskService.getTaskCount();
+
+        // 获取该学生签到次数
+        Long userCount = taskLogService.getTaskCountByUserId(userid);
+
+        return new BigDecimal(userCount)
+                .multiply(new BigDecimal(100))
+                .divide(new BigDecimal(taskCount), 2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -129,40 +146,22 @@ public class RegularGradeServiceImpl implements RegularGradeService {
      */
     @Override
     public BigDecimal calculateTotal(BigDecimal attendanceScore, BigDecimal reportScore, BigDecimal workScore) {
-        System.out.println(attendanceRatio);
-        System.out.println(reportRatio);
-        System.out.println(workRatio);
-
-
-        return BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
+        Ratio ratio = proportionService.getRatio();
+        total = total.add(attendanceScore.multiply(ratio.getAttendanceRatio()));
+        total = total.add(reportScore.multiply(ratio.getReportRatio()));
+        total = total.add(workScore.multiply(ratio.getWorkRatio()));
+        return total;
     }
 
-    public boolean changeRatio(BigDecimal attendanceRatio, BigDecimal reportRatio, BigDecimal workRatio) throws IOException {
-        ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
-        String url = "src/main/resources/config/application.yml";
-
-        // 从文件加载数据
-        File file = Paths.get(url).toFile();
-
-
-        Map<String, Object> data = null;
-        if (url != null) {
-            data = yamlMapper.readValue(file, Map.class);
-            System.out.println(data);
-        }
-        if (attendanceRatio != null) {
-            // 修改配置项
-            data.put("myRule.attendanceRatio", attendanceRatio);
-
-            // 将修改后的数据写回文件
-            if (url != null) {
-//                yamlMapper.writeValue(new File(url.getFile()), data);
-            }
-        }
-
-
-
-
-        return true;
+    /**
+     * 修改三个比例
+     * @param attendanceRatio 考勤分数占比
+     * @param reportRatio 汇报分数占比
+     * @param workRatio 作业分数占比
+     * @throws IOException io异常
+     */
+    public void changeRatio(BigDecimal attendanceRatio, BigDecimal reportRatio, BigDecimal workRatio) throws IOException {
+        proportionService.setRatio(new Ratio(attendanceRatio, reportRatio, workRatio));
     }
 }

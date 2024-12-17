@@ -40,7 +40,7 @@ public class RegularGrade implements Serializable {
     public RegularGrade() {
     }
 
-    public RegularGrade(String userid, BigDecimal attendanceScore, BigDecimal reportScore, BigDecimal workScore, BigDecimal totalScore, long serialVersionUID) {
+    public RegularGrade(String userid, BigDecimal attendanceScore, BigDecimal reportScore, BigDecimal workScore, BigDecimal totalScore) {
         this.userid = userid;
         this.attendanceScore = attendanceScore;
         this.reportScore = reportScore;

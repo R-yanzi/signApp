@@ -1,27 +1,8 @@
 spring:
-  application:
-    name: signIn
-  # 数据源配置
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/internet
-    username: root
-    password: ry200310
-  
-# mybatis相关配置
-# 1. 起别名
+  application: {name: signIn}
+  datasource: {type: com.zaxxer.hikari.HikariDataSource, driver-class-name: com.mysql.cj.jdbc.Driver,
+    url: 'jdbc:mysql://localhost:3306/internet', username: root, password: ry200310}
 mybatis:
   type-aliases-package: com.sign.signin.bean
-# 2. 告诉springboot mapper.xml文件在哪里
-  mapper-locations: classpath:/mapper/*.xml
-# 3. 启用驼峰命名, 延迟加载
-  configuration:
-    map-underscore-to-camel-case: true
-    lazy-loading-enabled: true
-
-# 成绩计算比例
-myRule:
-  attendanceRatio: 0.6
-  reportRatio: 0.2
-  workRatio: 0.2
+  mapper-locations: classpath:/mapper/*.xml, classpath:/mapper/task/*.xml
+  configuration: {map-underscore-to-camel-case: true, lazy-loading-enabled: true}

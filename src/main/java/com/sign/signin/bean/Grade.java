@@ -5,20 +5,15 @@ import java.math.BigDecimal;
 public class Grade {
     private User user;
 
-    private BigDecimal attendanceScore;
+    private RegularGrade regularGrade;
 
-    private BigDecimal reportScore;
-
-    private BigDecimal workScore;
 
     public Grade() {
     }
 
-    public Grade(User user, BigDecimal attendanceScore, BigDecimal reportScore, BigDecimal workScore) {
+    public Grade(User user, RegularGrade regularGrade) {
         this.user = user;
-        this.attendanceScore = attendanceScore;
-        this.reportScore = reportScore;
-        this.workScore = workScore;
+        this.regularGrade = regularGrade;
     }
 
     /**
@@ -39,53 +34,21 @@ public class Grade {
 
     /**
      * 获取
-     * @return attendanceScore
+     * @return regularGrade
      */
-    public BigDecimal getAttendanceScore() {
-        return attendanceScore;
+    public RegularGrade getRegularGrade() {
+        return regularGrade;
     }
 
     /**
      * 设置
-     * @param attendanceScore
+     * @param regularGrade
      */
-    public void setAttendanceScore(BigDecimal attendanceScore) {
-        this.attendanceScore = attendanceScore;
-    }
-
-    /**
-     * 获取
-     * @return reportScore
-     */
-    public BigDecimal getReportScore() {
-        return reportScore;
-    }
-
-    /**
-     * 设置
-     * @param reportScore
-     */
-    public void setReportScore(BigDecimal reportScore) {
-        this.reportScore = reportScore;
-    }
-
-    /**
-     * 获取
-     * @return workScore
-     */
-    public BigDecimal getWorkScore() {
-        return workScore;
-    }
-
-    /**
-     * 设置
-     * @param workScore
-     */
-    public void setWorkScore(BigDecimal workScore) {
-        this.workScore = workScore;
+    public void setRegularGrade(RegularGrade regularGrade) {
+        this.regularGrade = regularGrade;
     }
 
     public String toString() {
-        return "Grade{user = " + user + ", attendanceScore = " + attendanceScore + ", reportScore = " + reportScore + ", workScore = " + workScore + "}";
+        return "Grade{user = " + user + ", regularGrade = " + regularGrade + "}";
     }
 }

@@ -15,5 +15,5 @@ public interface RegularGradeService {
 
     BigDecimal calculateTotal(BigDecimal attendanceScore, BigDecimal reportScore, BigDecimal workScore);
 
-    boolean changeRatio(BigDecimal attendanceRatio, BigDecimal reportRatio, BigDecimal workRatio) throws IOException;
+    void changeRatio(BigDecimal attendanceRatio, BigDecimal reportRatio, BigDecimal workRatio) throws IOException;
 }

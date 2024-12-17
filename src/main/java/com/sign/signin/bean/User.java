@@ -13,8 +13,6 @@ public class User implements Serializable {
 
     private String classname;
 
-
-
     private static final long serialVersionUID = 1L;
 
     public User(String userid, String username, String classname, long serialVersionUID) {

@@ -13,6 +13,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Long getTaskCount() {
-        return taskMapper.selectAll();
+        return taskMapper.getCount();
     }
 }
